@@ -22,23 +22,29 @@ int main()
 
     //
     // Get the number of servers.
-    int nServers = 10;
     std::cout << "\nEnter a number of servers to simulate requests between: ";
-    std::cin >> nServers;
+    std::cin >> s_nServerCount;
 
     //
     // Get the total simulated clock cycles:
-    int nClockCycles = 10000;
     std::cout << "\nEnter a number of simulated clock cycles: ";
-    std::cin >> nClockCycles;
+    std::cin >> s_nClockEndTime;
+
+    //
+    // "...generate a full queue (usually servers * 100)"
+    Requests qInitial;
+    for (size_t i = 0; i < (s_nServerCount * 100); ++i)
+        //
+        // All data for the Request should be handled during construction.
+        qInitial.push(Request());
 
     //
     // Initialize locals for the simulation.
-    LoadBalancer lb;
+    LoadBalancer lb(qInitial);
 
     //
     // Create a log of 10 servers running for 10000 clock cycles
-    for (int i = 1; i <= nClockCycles; ++i) {
+    for (int i = 1; i <= s_nClockEndTime; ++i) {
         if (i % 1000 == 0)
         std::cout << "Cycle " << i << std::endl;
 
