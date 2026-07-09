@@ -145,9 +145,11 @@ LoadBalancer::StartSimulation()
         // the time we generate a new request.
         if (GenerateRandomNumber(1, 10) == 1) {
             Request newReq;
-            s_fileLog << "[Cycle " << s_nCurrentClockTime << "] New " << s_astrJobTypeNames[newReq.m_eJobType]
-                       << " request generated (" << newReq.m_strIPIn << " -> " << newReq.m_strIPOut
-                       << ", duration " << newReq.m_nProcessingDuration << ")" << std::endl;
+            s_fileLog << "[Cycle " << s_nCurrentClockTime 
+                      << "] New " << s_astrJobTypeNames[newReq.m_eJobType]
+                      << " request generated (" << newReq.m_strIPIn 
+                      << " -> " << newReq.m_strIPOut
+                      << ", duration " << newReq.m_nProcessingDuration << ")" << std::endl;
             DelegateRequest(newReq);
         }
         m_CharacterLoadBalancer.Tick();
