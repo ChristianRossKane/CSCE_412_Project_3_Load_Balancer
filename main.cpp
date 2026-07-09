@@ -32,25 +32,14 @@ int main()
 
     //
     // "...generate a full queue (usually servers * 100)"
-    Requests qInitial;
-    for (size_t i = 0; i < (s_nServerCount * 100); ++i)
+    LoadBalancer lb;
+    for (size_t i = 0; i < (s_nServerCount * 100); ++i) {
         //
         // All data for the Request should be handled during construction.
-        qInitial.push(Request());
-
-    //
-    // Initialize locals for the simulation.
-    LoadBalancer lb(qInitial);
-
-    //
-    // Create a log of 10 servers running for 10000 clock cycles
-    for (int i = 1; i <= s_nClockEndTime; ++i) {
-        if (i % 1000 == 0)
-        std::cout << "Cycle " << i << std::endl;
-
-        //
-        // ...
+        Request req;
+        lb.DelegateRequest(req);
     }
+    lb.StartSimulation();
 
     return 0;           
 }

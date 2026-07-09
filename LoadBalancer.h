@@ -49,12 +49,14 @@ struct Request
 
     //
     // Request Data:
-    std::string     m_strIPIn;
-    std::string     m_strIPOut;
-    int             m_nTimeToBeProcessed; // Should be in range s_nClockStartTime -> s_nClockEndTime
-    JobType         m_eJobType;
+    std::string             m_strIPIn;
+    std::string             m_strIPOut;
+    int                     m_nTimeToBeProcessed; // Should be in range s_nClockStartTime -> s_nClockEndTime
+    JobType                 m_eJobType;
 };
 typedef std::queue<Request> Requests;
+
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,13 +87,44 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 class LoadBalancer
 {
+    friend class InternalLoadBalancer;
 public:
-    LoadBalancer(Requests qInitial);
+
+    LoadBalancer();
     ~LoadBalancer();
 
-    void            AddRequest(Request& req);
+    void                    StartSimulation();
+    void                    DelegateRequest(Request& req);
 
 private:
 
-    Requests        m_qAllRequests;
+    ///////////////////////////////////////////////////////////////////////////
+    // Internal Load Balancer Class:
+    //  o A Load Balancer for each Job Type.
+    ///////////////////////////////////////////////////////////////////////////
+    class InternalLoadBalancer
+    {
+        friend LoadBalancer;
+    public:
+    
+        InternalLoadBalancer(Request::JobType eJobType);
+
+        void                AddRequest(Request& req);
+
+    private:
+        Requests            m_qRequests;
+        Request::JobType    m_eLoadBalancerType;
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Helpers:
+    ///////////////////////////////////////////////////////////////////////////
+    void                    UpdateLog();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Members:
+    ///////////////////////////////////////////////////////////////////////////
+    InternalLoadBalancer    m_CharacterLoadBalancer;
+    InternalLoadBalancer    m_ProcessingLoadBalancer;
+    InternalLoadBalancer    m_StreamingLoadBalancer;
 };
