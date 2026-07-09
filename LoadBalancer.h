@@ -18,14 +18,29 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <queue>
+#include <random>
+#include <fstream>
 
 ///////////////////////////////////////////////////////////////////////////////
-// Global Start and End Times for the Simluation (the end time should be
-// specified at the start of main())
+// Globals for use throughout the whole program.
 ///////////////////////////////////////////////////////////////////////////////
-static const int    s_nClockStartTime = 0;
-static int          s_nClockEndTime = 10000;
-static int          s_nServerCount = 10;
+extern const int            s_nClockStartTime;
+extern int                  s_nCurrentClockTime;
+extern int                  s_nClockEndTime;
+extern int                  s_nServerCount;
+extern std::ofstream        s_fileLog;
+
+///////////////////////////////////////////////////////////////////////////////
+// Helper to generate random numbers.
+///////////////////////////////////////////////////////////////////////////////
+inline int 
+GenerateRandomNumber(int nLowerBound, int nUpperBound)
+{
+    static std::random_device SEED;
+    static std::mt19937 gen(SEED());
+    std::uniform_int_distribution<int> dist(nLowerBound, nUpperBound);
+    return dist(gen);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //  ● Requests - generates random IP addresses, both in and out, and random 
@@ -37,7 +52,15 @@ static int          s_nServerCount = 10;
 ///////////////////////////////////////////////////////////////////////////////
 struct Request
 {
-    Request();
+    Request()
+    {
+        //
+        // Randomly create each member:
+        m_eJobType = JobType(GenerateRandomNumber(0, 2));
+        m_nProcessingDuration = GenerateRandomNumber(1, 100);
+        //m_strIPIn = ;
+        //m_strIPOut = ;
+    }
     
     //
     // Request::JobType Enum Definition:
@@ -51,7 +74,7 @@ struct Request
     // Request Data:
     std::string             m_strIPIn;
     std::string             m_strIPOut;
-    int                     m_nTimeToBeProcessed; // Should be in range s_nClockStartTime -> s_nClockEndTime
+    int                     m_nProcessingDuration; // random int 1-100
     JobType                 m_eJobType;
 };
 typedef std::queue<Request> Requests;
@@ -68,14 +91,17 @@ typedef std::queue<Request> Requests;
 class WebServer
 {
 public:
-
-    // ...
+    bool                    ProcessingRequest();
+    void                    ProcessRequest(Request req);
+    void                    UpdateLog();
 
 private:
 
-    // ...
-
+    Request                 m_RequestBeingProcessed;
+    int                     m_nRequestReceived;
+    int                     m_nRequestWillFinish;
 };
+typedef std::vector<WebServer> Servers;
 
 
 
@@ -95,6 +121,7 @@ public:
 
     void                    StartSimulation();
     void                    DelegateRequest(Request& req);
+    void                    UpdateLog();
 
 private:
 
@@ -110,6 +137,8 @@ private:
         InternalLoadBalancer(Request::JobType eJobType);
 
         void                AddRequest(Request& req);
+        void                Tick();
+        void                UpdateLog();
 
     private:
         Requests            m_qRequests;
@@ -117,13 +146,10 @@ private:
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    // Helpers:
-    ///////////////////////////////////////////////////////////////////////////
-    void                    UpdateLog();
-
-    ///////////////////////////////////////////////////////////////////////////
     // Members:
     ///////////////////////////////////////////////////////////////////////////
+    static LoadBalancer*    sm_this;
+    Servers                 m_Servers;
     InternalLoadBalancer    m_CharacterLoadBalancer;
     InternalLoadBalancer    m_ProcessingLoadBalancer;
     InternalLoadBalancer    m_StreamingLoadBalancer;
