@@ -20,6 +20,7 @@
 #include <queue>
 #include <random>
 #include <fstream>
+#include <sstream>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Globals for use throughout the whole program.
@@ -57,9 +58,19 @@ struct Request
         //
         // Randomly create each member:
         m_eJobType = JobType(GenerateRandomNumber(0, 2));
-        m_nProcessingDuration = GenerateRandomNumber(1, 100);
-        //m_strIPIn = ;
-        //m_strIPOut = ;
+        m_nProcessingDuration = GenerateRandomNumber(1, 75);
+        std::ostringstream ossIn;
+        ossIn << GenerateRandomNumber(0, 255) << "." <<
+                 GenerateRandomNumber(0, 255) << "." << 
+                 GenerateRandomNumber(0, 255) << "." << 
+                 GenerateRandomNumber(0, 255);
+        m_strIPIn = ossIn.str();
+        std::ostringstream ossOut;
+        ossOut << GenerateRandomNumber(0, 255) << "." << 
+                  GenerateRandomNumber(0, 255) << "." << 
+                  GenerateRandomNumber(0, 255) << "." << 
+                  GenerateRandomNumber(0, 255);
+        m_strIPOut = ossOut.str();
     }
     
     //
@@ -74,7 +85,7 @@ struct Request
     // Request Data:
     std::string             m_strIPIn;
     std::string             m_strIPOut;
-    int                     m_nProcessingDuration; // random int 1-100
+    int                     m_nProcessingDuration; // random int 1-75
     JobType                 m_eJobType;
 };
 typedef std::queue<Request> Requests;
@@ -98,8 +109,8 @@ public:
 private:
 
     Request                 m_RequestBeingProcessed;
-    int                     m_nRequestReceived;
-    int                     m_nRequestWillFinish;
+    int                     m_nRequestReceived = -1;
+    int                     m_nRequestWillFinish = -1; // -1 means idle: always < s_nCurrentClockTime
 };
 typedef std::vector<WebServer> Servers;
 
@@ -150,6 +161,9 @@ private:
     ///////////////////////////////////////////////////////////////////////////
     static LoadBalancer*    sm_this;
     Servers                 m_Servers;
+    int                     m_nStartingServerCount = s_nServerCount;
+    int                     m_nServersAdded = 0;
+    int                     m_nServersDeleted = 0;
     InternalLoadBalancer    m_CharacterLoadBalancer;
     InternalLoadBalancer    m_ProcessingLoadBalancer;
     InternalLoadBalancer    m_StreamingLoadBalancer;

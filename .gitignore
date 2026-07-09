@@ -1,4 +1,5 @@
 *.o
 load_balancer
+logs/
 
 .DS_Store
