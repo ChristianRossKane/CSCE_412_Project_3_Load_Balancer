@@ -1,6 +1,8 @@
-///////////////////////////////////////////////////////////////////////////////
-// LoadBalancer Class : Function Bodies
-///////////////////////////////////////////////////////////////////////////////
+/**
+ * @file LoadBalancer.cpp
+ * @brief Function bodies for the Request, WebServer, and LoadBalancer types
+ *        declared in LoadBalancer.h.
+ */
 
 #include "LoadBalancer.h"
 #include <iostream>
@@ -16,12 +18,9 @@ int             s_nClockEndTime = 10000;
 int             s_nServerCount = 10;
 std::ofstream   s_fileLog;
 
-///////////////////////////////////////////////////////////////////////////////
-// Names for each Request::JobType, indexed by the enum value. Used for
-// logging only.
-///////////////////////////////////////////////////////////////////////////////
-static const char* const s_astrJobTypeNames[] = {   "Character", 
-                                                    "Processing", 
+/// Names for each Request::JobType, indexed by the enum value. Used for logging only.
+static const char* const s_astrJobTypeNames[] = {   "Character",
+                                                    "Processing",
                                                     "Streaming" };
 
 ///////////////////////////////////////////////////////////////////////////////

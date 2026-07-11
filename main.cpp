@@ -1,16 +1,25 @@
+/**
+ * @file main.cpp
+ * @brief Driver program for the CSCE 412 Load Balancer simulation.
+ */
+
 #include "LoadBalancer.h"
 #include <iostream>
 
+/**
+ * @brief Entry point. Prompts for a server count and clock-cycle run length,
+ *        builds an initial full queue of servers * 100 random Requests, and
+ *        runs the simulation.
+ * @return 0 on successful completion.
+ */
 int main()
 {
     ///////////////////////////////////////////////////////////////////////////
-    // "The main program should set up the number of servers (user input), the 
+    // "The main program should set up the number of servers (user input), the
     // time you want to run the load balancer (user input), and generate a full
     // queue (usually servers * 100)."
-    // 
-    // ...
     //
-    // You will need to add new requests at random times to simulate new 
+    // You will need to add new requests at random times to simulate new
     // requests after the initial full queue you set up.
     ///////////////////////////////////////////////////////////////////////////
 
