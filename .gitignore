@@ -1,6 +1,5 @@
 *.o
 load_balancer
 logs/
-docs/
 
 .DS_Store
